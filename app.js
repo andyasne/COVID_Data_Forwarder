@@ -1,5 +1,7 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+// const { transform } = require("node-json-transform").transformAsync;
+const transform = require("node-json-transform").transformAsync;
 
 // proxy middleware options
 const options = {
@@ -17,27 +19,26 @@ const options = {
   },
   onProxyReq: function onProxyReq(proxyReq, req, res) {
     if ( req.method == "POST" && req.body ) {
-   // Remove body-parser body object from the request
-   if ( req.body ) delete req.body;
 
-   // Make any needed POST parameter changes
-   let body = new Object();
+    var map = {
+    item: {
+      modifiednmame: "name"}
+    };
 
-   body.filename = 'reports/statistics/summary_2016.pdf';
-   body.routeid = 's003b012d002';
-   body.authid = 'bac02c1d-258a-4177-9da6-862580154960';
+    const resultObj ="dd"
+    transform(req.body, map).then(function(result){
+      console.log(result);
+    });
+    const result = JSON.stringify(resultObj);
+    console.log(result);
 
-   // URI encode JSON object
-   body = Object.keys( body ).map(function( key ) {
-       return encodeURIComponent( key ) + '=' + encodeURIComponent( body[ key ])
-   }).join('&');
 
    // Update header
    proxyReq.setHeader( 'content-type', 'application/x-www-form-urlencoded' );
-   proxyReq.setHeader( 'content-length', body.length );
+   proxyReq.setHeader( 'content-length', result.length );
 
    // Write out body changes to the proxyReq stream
-   proxyReq.write( body );
+   proxyReq.write( result );
    proxyReq.end();
     }
     // add custom header to request

@@ -1,9 +1,7 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-// const { transform } = require("node-json-transform").transformAsync;
-const transform = require("node-json-transform").transformAsync;
+const transform = require("node-json-transform").transform;
 
-// proxy middleware options
 const options = {
   target: 'http://localhost:8000', // target host
   changeOrigin: true, // needed for virtual hosted sites
@@ -25,10 +23,7 @@ const options = {
       modifiednmame: "name"}
     };
 
-    const resultObj ="dd"
-    transform(req.body, map).then(function(result){
-      console.log(result);
-    });
+    const resultObj = transform(req.body, map);
     const result = JSON.stringify(resultObj);
     console.log(result);
 
@@ -41,25 +36,17 @@ const options = {
    proxyReq.write( result );
    proxyReq.end();
     }
-    // add custom header to request
-    // proxyReq.setHeader('x-added', 'foobar');
-    // or log the req
-  1}
+  
+  }
 
 };
 
 // create the proxy (without context)
-const exampleProxy = createProxyMiddleware(options);
+const covidProxy = createProxyMiddleware(options);
 
 
-// exampleProxy.on('onProxyReq', function onProxyReq(proxyReq, req, res) {
-//   // add custom header to request
-//   proxyReq.setHeader('x-added', 'foobar');
-//   // or log the req
-// });
-
-// mount `exampleProxy` in web server
+// mount `covidProxy` in web server
 const app = express();
 app.use(express.json());
-app.use('/api', exampleProxy);
+app.use('/api', covidProxy);
 app.listen(3000);

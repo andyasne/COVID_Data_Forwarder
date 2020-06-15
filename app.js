@@ -3,17 +3,17 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const transform = require("node-json-transform").transform;
 
 const options = {
-  target: 'http://localhost:8000', // target host
+  target: 'http://3.95.229.192:3000', // target host
   changeOrigin: true, // needed for virtual hosted sites
    ws: true, // proxy websockets
   pathRewrite: {
-    '^/api/old-path': '/api/new-path', // rewrite path
+    '^/api': '/users', // rewrite path
     '^/api/remove/path': '/path', // remove base path
   },
   router: {
     // when request.headers.host == 'dev.localhost:3000',
     // override target 'http://www.example.org' to 'http://localhost:8000'
-    'dev.localhost:3000': 'http://localhost:8000',
+    'dev.localhost:3000': 'http://3.95.229.192:3000',
   },
   onProxyReq: function onProxyReq(proxyReq, req, res) {
     if ( req.method == "POST" && req.body ) {
@@ -29,14 +29,14 @@ const options = {
 
 
    // Update header
-   proxyReq.setHeader( 'content-type', 'application/x-www-form-urlencoded' );
-   proxyReq.setHeader( 'content-length', result.length );
+   proxyReq.setHeader( 'content-type', 'application/json' );
+  proxyReq.setHeader( 'content-length', result.length );
 
    // Write out body changes to the proxyReq stream
-   proxyReq.write( result );
+   proxyReq.write(result );
    proxyReq.end();
     }
-  
+
   }
 
 };

@@ -1,0 +1,18 @@
+{
+  "name": "coviddataforwarder",
+  "version": "1.0.0",
+  "description": "Proxies requests",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AndyA",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-http-proxy": "^1.6.0"
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^1.0.4"
+  }
+}

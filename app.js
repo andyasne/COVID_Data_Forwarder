@@ -22,9 +22,10 @@ const options = {
     const result = JSON.stringify(resultObj);
     console.log(result);
 
-
+ let token = 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyIiwiVXNlck5hbWUiOiJ0ZiIsIkZ1bGxOYW1lIjoiVG9sbCBGcmVlIiwiUm9sZSI6IlRvbGxGcmVlIiwiUmVnaW9uIjoiQWRkaXMgQWJhYmEiLCJIb3NwaXRhbCI6IiIsIkNhbGxDZW50ZXIiOiI4MzM1IiwiZXhwIjoxNTkyMzI5MTU0fQ.tMa12aGeMd-eW3la-hqJIHRzk6xtPHIICmXiKcwjHV4';
    // Update header
   proxyReq.setHeader( 'content-type', 'application/json' );
+  proxyReq.setHeader( 'authorization', token);
   proxyReq.setHeader( 'content-length', result.length );
 
    // Write out body changes to the proxyReq stream
@@ -56,9 +57,9 @@ function transformJSON(req) {
         Email :   "",
         Sex :   "properties.Sex",
         Age :  "properties.ageNumber",
-        Region :   "properties.region",
-        SubcityOrZone :   "properties.subcity",
-        Woreda :   "properties.woreda",
+        Region :   "properties.region", //TODO:- Add region to Community Inspection
+        SubcityOrZone :   "properties.subcity",//TODO:- Add subcity to Community Inspection
+        Woreda :   "properties.woreda",//TODO:- Add woreda to Community Inspection
         Kebele :   "properties.Kebele",
         HouseNo :   "properties.HouseNo",
         PhoneNo :   "properties.PhoneNo",

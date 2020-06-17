@@ -4,10 +4,10 @@ const transform = require("node-json-transform").transform;
 
 const options = {
   target: 'http://3.95.229.192:3000', // target host
-  changeOrigin:"properties.HouseNo", // needed for virtual hosted sites
-   ws:"properties.HouseNo", // proxy websockets
+  changeOrigin:"true", // needed for virtual hosted sites
+   ws:"true", // proxy websockets
   pathRewrite: {
-    '^/api': '/users', // rewrite path
+    '^/': '/users', // rewrite path
     '^/api/remove/path': '/path', // remove base path
   },
   router: {
@@ -44,7 +44,7 @@ const covidProxy = createProxyMiddleware(options);
 // mount `covidProxy` in web server
 const app = express();
 app.use(express.json());
-app.use('/api', covidProxy);
+app.use( covidProxy);
 app.listen(3000);
 
 function transformJSON(req) {

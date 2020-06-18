@@ -13,7 +13,7 @@ const options = {
   router: {
     // when request.headers.host == 'dev.localhost:3000',
     // override target 'http://www.example.org' to 'http://localhost:8000'
-    'dev.localhost:3000': 'http://3.95.229.192:3000',
+    'dev.localhost:3000': 'http://3.95.229.192:8000',
   },
   onProxyReq: function onProxyReq(proxyReq, req, res) {
     if ( req.method == "POST" && req.body ) {

@@ -3,17 +3,17 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const transform = require("node-json-transform").transform;
 
 const options = {
-  target: 'http://3.95.229.192:8000', // target host
+  target: 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections', // target host
   changeOrigin:"true", // needed for virtual hosted sites
    ws:"true", // proxy websockets
   pathRewrite: {
-    '^/': '/users', // rewrite path
+    '^/': '/', // rewrite path
     '^/api/remove/path': '/path', // remove base path
   },
   router: {
     // when request.headers.host == 'dev.localhost:3000',
     // override target 'http://www.example.org' to 'http://localhost:8000'
-    'dev.localhost:3000': 'http://3.95.229.192:8000',
+    'localhost:3000': 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections',
   },
   onProxyReq: function onProxyReq(proxyReq, req, res) {
     if ( req.method == "POST" && req.body ) {
@@ -22,7 +22,7 @@ const options = {
     const result = JSON.stringify(resultObj);
     console.log(result);
 
- let token = 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyIiwiVXNlck5hbWUiOiJ0ZiIsIkZ1bGxOYW1lIjoiVG9sbCBGcmVlIiwiUm9sZSI6IlRvbGxGcmVlIiwiUmVnaW9uIjoiQWRkaXMgQWJhYmEiLCJIb3NwaXRhbCI6IiIsIkNhbGxDZW50ZXIiOiI4MzM1IiwiZXhwIjoxNTkyMzI5MTU0fQ.tMa12aGeMd-eW3la-hqJIHRzk6xtPHIICmXiKcwjHV4';
+ let token = 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyIiwiVXNlck5hbWUiOiJ0ZiIsIkZ1bGxOYW1lIjoiVG9sbCBGcmVlIiwiUm9sZSI6IlRvbGxGcmVlIiwiUmVnaW9uIjoiQWRkaXMgQWJhYmEiLCJIb3NwaXRhbCI6IiIsIkNhbGxDZW50ZXIiOiI4MzM1IiwiZXhwIjoxNTkyNjEyMzUxfQ.h6VxgkVb9mIxg3Q53WTcEmuw0p6jn8KEfOB-sYQ4cfY';
    // Update header
   proxyReq.setHeader( 'content-type', 'application/json' );
   proxyReq.setHeader( 'authorization', token);

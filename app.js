@@ -22,7 +22,7 @@ const options = {
     const result = JSON.stringify(resultObj);
     console.log(result);
 
- let token = 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyIiwiVXNlck5hbWUiOiJ0ZiIsIkZ1bGxOYW1lIjoiVG9sbCBGcmVlIiwiUm9sZSI6IlRvbGxGcmVlIiwiUmVnaW9uIjoiQWRkaXMgQWJhYmEiLCJIb3NwaXRhbCI6IiIsIkNhbGxDZW50ZXIiOiI4MzM1IiwiZXhwIjoxNTkyNjEyMzUxfQ.h6VxgkVb9mIxg3Q53WTcEmuw0p6jn8KEfOB-sYQ4cfY';
+ let token = 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIzMyIsIlVzZXJOYW1lIjoidGZBZG1pbiIsIkZ1bGxOYW1lIjoiVG9sbEZyZWVBZG1pbiIsIlJvbGUiOiJUb2xsRnJlZUFkbWluIiwiUmVnaW9uIjoiQWRkaXMgQWJhYmEiLCJIb3NwaXRhbCI6IiIsIkNhbGxDZW50ZXIiOiI4MzM1IiwiZXhwIjoxNTkyODQ2OTUzfQ.Kdap1_YhDG4ZzTRhXiilpH2M78ZhqBHHngaZ7KKwAAM';
    // Update header
   proxyReq.setHeader( 'content-type', 'application/json' );
   proxyReq.setHeader( 'authorization', token);
@@ -33,8 +33,11 @@ const options = {
    proxyReq.end();
     }
 
+  },
+  onProxyRes:function onProxyRes(proxyRes, req, res) {
+    proxyRes.headers['x-added'] = 'foobar'; // add new header to response
+    delete proxyRes.headers['x-removed']; // remove header from response
   }
-
 };
 
 // create the proxy (without context)
@@ -56,8 +59,6 @@ function transformJSON(req) {
         Nationality :   "properties.Nationality",
         Email :   "",
         Sex :   "properties.Sex",
-        Age :  "properties.ageNumber",
-        Region :   "properties.region", //TODO:- Add region to Community Inspection
         SubcityOrZone :   "properties.subcity",//TODO:- Add subcity to Community Inspection
         Woreda :   "properties.woreda",//TODO:- Add woreda to Community Inspection
         Kebele :   "properties.Kebele",
@@ -76,7 +77,7 @@ function transformJSON(req) {
         HeadacheStartDate :   "properties.HeadacheStartDate",
         SoreThroat :  "properties.SoreThroat",
         SoreThroatStartDate :   "properties.SoreThroatStartDate",
-        RunnyNose :  " ",
+        RunnyNose :  " ",//TODO: Not defined on CI case
         RunnyNoseStartDate :   "",
         UnwellnessFeeling :  "properties.UnwellnessFeeling",
         UnwellnessFeelingStartDate :   "properties.UnwellnessFeelingStartDate",
@@ -91,11 +92,26 @@ function transformJSON(req) {
         ReceiverName :   "",
         CheckedBy :   "",
         Remark :    "properties.remark",
-        HouseToHouseID :   "",
-        Source :   "properties.case_type",
-        FormStatus :   ""
+        HouseToHouseID :   "properties.codeNumber",
+        Region :   "properties.region",
+        Age :  "properties.ageNumber",
+        Source :   "Toll Free",
+        FormStatus :   "Complete"
 
-    }
+
+    } ,
+     defaults: {
+      Region :   "Addis Ababa", //TODO:- Add region to Community Inspection
+      Age :  25,
+      RunnyNose :  false,
+      Source :   "Toll Free",
+        FormStatus :   "Complete",
+        HouseToHouseID :  0,
+    },
+    operate: [
+      {
+        run: function(val) { return Number(val)}, on: "Age"
+      }],
   };
 
   const resultObj = transform(req.body, map);

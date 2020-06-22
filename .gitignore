@@ -15,3 +15,5 @@ yarn-error.log
 coverage
 combined.log
 error.log
+not transfered data.log
+transfered data.log

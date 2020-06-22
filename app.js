@@ -55,9 +55,9 @@ function transformJSON(req) {
         LastName :   "properties.LastName",
         Nationality :   "properties.Nationality",
         Email :   "",
-        Sex :   "properties.Sex",
+        Sex :   25,
         Age :  "properties.ageNumber",
-        Region :   "properties.region", //TODO:- Add region to Community Inspection
+        Region :   "Addis Ababa", //TODO:- Add region to Community Inspection
         SubcityOrZone :   "properties.subcity",//TODO:- Add subcity to Community Inspection
         Woreda :   "properties.woreda",//TODO:- Add woreda to Community Inspection
         Kebele :   "properties.Kebele",
@@ -92,8 +92,8 @@ function transformJSON(req) {
         CheckedBy :   "",
         Remark :    "properties.remark",
         HouseToHouseID :   "",
-        Source :   "properties.case_type",
-        FormStatus :   ""
+        Source :   "Toll Free",
+        FormStatus :   "Complete"
 
     }
   };

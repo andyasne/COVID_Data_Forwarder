@@ -58,7 +58,13 @@ function transformJSON(req) {
         LastName :   "properties.LastName",
         Nationality :   "properties.Nationality",
         Email :   "",
+<<<<<<< HEAD
         Sex :   "properties.Sex",
+=======
+        Sex :   25,
+        Age :  "properties.ageNumber",
+        Region :   "Addis Ababa", //TODO:- Add region to Community Inspection
+>>>>>>> 915558a8725874b1a6e285017d76b6d5406f4884
         SubcityOrZone :   "properties.subcity",//TODO:- Add subcity to Community Inspection
         Woreda :   "properties.woreda",//TODO:- Add woreda to Community Inspection
         Kebele :   "properties.Kebele",

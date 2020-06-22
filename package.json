@@ -11,7 +11,9 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.0",
-    "node-json-transform": "^1.1.0"
+    "node-json-transform": "^1.1.0",
+    "request": "^2.88.2",
+    "winston": "^3.3.2"
   },
   "devDependencies": {
     "http-proxy-middleware": "^1.0.4"

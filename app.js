@@ -1,6 +1,28 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const transform = require("node-json-transform").transform;
+const request = require('request');
+const winston = require('winston');
+let prevToken;
+let tokenExpDate;
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    //
+    // - Write all logs with level `error` and below to `error.log`
+    // - Write all logs with level `info` and below to `combined.log`
+    //
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
+logger.add(new winston.transports.Console({
+  format: winston.format.simple(),
+}));
+
+
 
 const options = {
   target: 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections', // target host
@@ -18,11 +40,13 @@ const options = {
   onProxyReq: function onProxyReq(proxyReq, req, res) {
     if ( req.method == "POST" && req.body ) {
 
+
+
     const resultObj = transformJSON(req);
     const result = JSON.stringify(resultObj);
-    console.log(result);
+    logger.info("RECEIVED POST"+ result);
 
- let token = 'Bearer '+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIzMyIsIlVzZXJOYW1lIjoidGZBZG1pbiIsIkZ1bGxOYW1lIjoiVG9sbEZyZWVBZG1pbiIsIlJvbGUiOiJUb2xsRnJlZUFkbWluIiwiUmVnaW9uIjoiQWRkaXMgQWJhYmEiLCJIb3NwaXRhbCI6IiIsIkNhbGxDZW50ZXIiOiI4MzM1IiwiZXhwIjoxNTkyODQ2OTUzfQ.Kdap1_YhDG4ZzTRhXiilpH2M78ZhqBHHngaZ7KKwAAM';
+   let token = 'Bearer '+ getToken();
    // Update header
   proxyReq.setHeader( 'content-type', 'application/json' );
   proxyReq.setHeader( 'authorization', token);
@@ -35,20 +59,52 @@ const options = {
 
   },
   onProxyRes:function onProxyRes(proxyRes, req, res) {
-    proxyRes.headers['x-added'] = 'foobar'; // add new header to response
-    delete proxyRes.headers['x-removed']; // remove header from response
+
+    logger.info("Response status Code"+ proxyRes.statusCode);
+    logger.info("Response status message"+ proxyRes.statusMessage);
+
   }
 };
-
 // create the proxy (without context)
 const covidProxy = createProxyMiddleware(options);
 
-
-// mount `covidProxy` in web server
 const app = express();
+if(tokenExpDate === undefined){
+logger.info("Get Token for the First Time")
+
+  getToken()}
 app.use(express.json());
 app.use( covidProxy);
+logger.info("Started Listening at port 3000")
 app.listen(3000);
+
+function getToken() {
+//check if it expired
+const options = {
+  url: 'https://covidtollfreereg.api.sandboxaddis.com/api/Auth',
+  json: true,
+  body: {
+    UserName: "tfadmin",
+    Password: "pass"
+  }
+};
+let today= new Date();
+if(today >= tokenExpDate || tokenExpDate === undefined){
+
+request.post(options, (err, res, body) => {
+  if (err) {
+      return console.log(err);
+  }
+
+  tokenExpDate = new Date(body.expiration);
+  prevToken=body.token;
+logger.info("Get New Token"+prevToken)
+  return prevToken;
+});
+}else{
+  return prevToken;
+}
+}
 
 function transformJSON(req) {
   var map = {

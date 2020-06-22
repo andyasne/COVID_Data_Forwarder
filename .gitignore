@@ -13,3 +13,5 @@ yarn-error.log
 
 # Code coverage
 coverage
+combined.log
+error.log

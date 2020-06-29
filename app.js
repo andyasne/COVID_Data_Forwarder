@@ -52,10 +52,11 @@ const options = {
       const resultObj = transformJSON(req);
       const result = JSON.stringify(resultObj);
       let token = 'Bearer ' + getToken();
+      let val=1000;
       // Update header
       proxyReq.setHeader('content-type', 'application/json');
       proxyReq.setHeader('authorization', token);
-      proxyReq.setHeader('content-length', result.length);
+      //  proxyReq.setHeader('content-length', val );
       // Write out body changes to the proxyReq stream
       proxyReq.write(result);
       proxyReq.end();
@@ -153,7 +154,7 @@ function transformJSON(req) {
       ReceiverName: "",
       CheckedBy: "",
       Remark: "properties.remark",
-      HouseToHouseID: "properties.codeNumber",
+      HouseToHouseID: "case_id",
       Region: "properties.region",
       Age: "properties.ageNumber",
       Source: "Toll Free",

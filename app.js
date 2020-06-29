@@ -1,4 +1,5 @@
 const express = require('express');
+const express1 = require('express');
 const {
   createProxyMiddleware
 } = require('http-proxy-middleware');
@@ -35,28 +36,33 @@ logger.add(new winston.transports.Console({
   format: winston.format.simple(),
 }));
 const options = {
-  target: 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections', // target host
+  target: 'http://localhost:4001', // target host
   changeOrigin: "true", // needed for virtual hosted sites
-  ws: "true", // proxy websockets
+  // ws: "true", // proxy websockets
   pathRewrite: {
     '^/': '/', // rewrite path
     '^/api/remove/path': '/path', // remove base path
   },
-  router: {
-    // when request.headers.host == 'dev.localhost:3000',
-    // override target 'http://www.example.org' to 'http://localhost:8000'
-    'localhost:3000': 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections',
-  },
+
   onProxyReq: function onProxyReq(proxyReq, req, res) {
     if (req.method == "POST" && req.body) {
       const resultObj = transformJSON(req);
       const result = JSON.stringify(resultObj);
-      let token = 'Bearer ' + getToken();
-      let val=1000;
+       let token = 'Bearer ' + getToken();
+      // let val=1000;
       // Update header
-      proxyReq.setHeader('content-type', 'application/json');
+      // proxyReq.setHeader('content-type', 'application/json;charset=UTF-8');
+      // proxyReq.setHeader("accept", 'application/json');
+      // proxyReq.setHeader("accept-language","am");
+      // proxyReq.removeHeader("postman-token");
+      // proxyReq.removeHeader("user-agent");
+      // proxyReq.removeHeader("accept");
+      // proxyReq.removeHeader("cache-control");
       proxyReq.setHeader('authorization', token);
-      //  proxyReq.setHeader('content-length', val );
+      Buffer.byteLength(result, 'utf8')
+
+      let v=Buffer.from(result).length
+       proxyReq.setHeader('content-length', v );
       // Write out body changes to the proxyReq stream
       proxyReq.write(result);
       proxyReq.end();
@@ -72,6 +78,28 @@ const options = {
     }
   }
 };
+
+
+const app1 = express1();
+app1.use(express1.json());
+ app1.post('/', function (req, res) {
+  res.send(req.body)
+
+})
+app1.get('/', function (req, res) {
+  res.send('Hello World!')
+})
+app1.listen(4001, () => console.log(`XXXXXXXXXXXXXXXXX http://127.0.0.1:4001`));
+function lengthInPageEncoding(s) {
+  var a = document.createElement('A');
+  a.href = '#' + s;
+  var sEncoded = a.href;
+  sEncoded = sEncoded.substring(sEncoded.indexOf('#') + 1);
+  var m = sEncoded.match(/%[0-9a-f]{2}/g);
+  return sEncoded.length - (m ? m.length * 2 : 0);
+}
+
+
 // create the proxy (without context)
 const covidProxy = createProxyMiddleware(options);
 const app = express();
@@ -82,7 +110,8 @@ if (tokenExpDate === undefined) {
 app.use(express.json());
 app.use(covidProxy);
 logger.info("Started Listening at port 3000")
-app.listen(3000);
+app.listen(4000);
+
 
 function getToken() {
   //check if it expired

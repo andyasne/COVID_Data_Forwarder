@@ -7,8 +7,8 @@ const transform = require("node-json-transform").transform;
 const request = require('request');
 const winston = require('winston');
 
-let targetUrl='https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections';
-let authUrl ='https://covidtollfreereg.api.sandboxaddis.com/api/Auth';
+let targetUrl='https://8335.api.covid19.et/api/CommunityInspections';
+let authUrl ='https://8335.api.covid19.et/api/Auth';
 
 let prevToken;
 let tokenExpDate;

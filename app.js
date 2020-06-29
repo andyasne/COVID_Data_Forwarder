@@ -6,6 +6,10 @@ const {
 const transform = require("node-json-transform").transform;
 const request = require('request');
 const winston = require('winston');
+
+let targetUrl='https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections';
+let authUrl ='https://covidtollfreereg.api.sandboxaddis.com/api/Auth';
+
 let prevToken;
 let tokenExpDate;
 const logger = winston.createLogger({
@@ -34,10 +38,8 @@ logger.add(new winston.transports.Console({
 }));
 const options = {
   // target: 'http://localhost:4001', // target host
-  target: 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections', // target host
-
+  target: targetUrl, // target host
   changeOrigin: "true", // needed for virtual hosted sites
-  // ws: "true", // proxy websockets
   pathRewrite: {
     '^/': '/', // rewrite path
     '^/api/remove/path': '/path', // remove base path
@@ -68,20 +70,6 @@ const options = {
 };
 
 
-const testingServer = express1();
-testingServer.use(express1.json());
-testingServer.post('/', function (req, res) {
-  res.send(req.body)
-
-})
-testingServer.get('/', function (req, res) {
-  res.send('Hello World!')
-})
-testingServer.listen(4001, () => console.log(`Started Testing Server http://127.0.0.1:4001`));
-
-
-
-
 // create the proxy (without context)
 const covidProxy = createProxyMiddleware(options);
 const app = express();
@@ -92,13 +80,13 @@ if (tokenExpDate === undefined) {
 app.use(express.json());
 app.use(covidProxy);
 logger.info("Started Listening at port 3000")
-app.listen(4000);
+app.listen(3000);
 
 
 function getToken() {
   //check if it expired
   const options = {
-    url: 'https://covidtollfreereg.api.sandboxaddis.com/api/Auth',
+    url: authUrl,
     json: true,
     body: {
       UserName: "tfadmin",

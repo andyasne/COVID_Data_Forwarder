@@ -15,10 +15,7 @@ const logger = winston.createLogger({
     service: 'user-service'
   },
   transports: [
-    //
-    // - Write all logs with level `error` and below to `error.log`
-    // - Write all logs with level `info` and below to `combined.log`
-    //
+
     new winston.transports.File({
       filename: 'not transfered data.log',
       level: 'error'
@@ -36,7 +33,9 @@ logger.add(new winston.transports.Console({
   format: winston.format.simple(),
 }));
 const options = {
-  target: 'http://localhost:4001', // target host
+  // target: 'http://localhost:4001', // target host
+  target: 'https://covidtollfreereg.api.sandboxaddis.com/api/CommunityInspections', // target host
+
   changeOrigin: "true", // needed for virtual hosted sites
   // ws: "true", // proxy websockets
   pathRewrite: {
@@ -48,22 +47,11 @@ const options = {
     if (req.method == "POST" && req.body) {
       const resultObj = transformJSON(req);
       const result = JSON.stringify(resultObj);
-       let token = 'Bearer ' + getToken();
-      // let val=1000;
-      // Update header
-      // proxyReq.setHeader('content-type', 'application/json;charset=UTF-8');
-      // proxyReq.setHeader("accept", 'application/json');
-      // proxyReq.setHeader("accept-language","am");
-      // proxyReq.removeHeader("postman-token");
-      // proxyReq.removeHeader("user-agent");
-      // proxyReq.removeHeader("accept");
-      // proxyReq.removeHeader("cache-control");
+      let token = 'Bearer ' + getToken();
       proxyReq.setHeader('authorization', token);
       Buffer.byteLength(result, 'utf8')
-
-      let v=Buffer.from(result).length
-       proxyReq.setHeader('content-length', v );
-      // Write out body changes to the proxyReq stream
+      let resultLength = Buffer.from(result).length
+      proxyReq.setHeader('content-length', resultLength);
       proxyReq.write(result);
       proxyReq.end();
     }
@@ -80,24 +68,18 @@ const options = {
 };
 
 
-const app1 = express1();
-app1.use(express1.json());
- app1.post('/', function (req, res) {
+const testingServer = express1();
+testingServer.use(express1.json());
+testingServer.post('/', function (req, res) {
   res.send(req.body)
 
 })
-app1.get('/', function (req, res) {
+testingServer.get('/', function (req, res) {
   res.send('Hello World!')
 })
-app1.listen(4001, () => console.log(`XXXXXXXXXXXXXXXXX http://127.0.0.1:4001`));
-function lengthInPageEncoding(s) {
-  var a = document.createElement('A');
-  a.href = '#' + s;
-  var sEncoded = a.href;
-  sEncoded = sEncoded.substring(sEncoded.indexOf('#') + 1);
-  var m = sEncoded.match(/%[0-9a-f]{2}/g);
-  return sEncoded.length - (m ? m.length * 2 : 0);
-}
+testingServer.listen(4001, () => console.log(`Started Testing Server http://127.0.0.1:4001`));
+
+
 
 
 // create the proxy (without context)
@@ -195,6 +177,15 @@ function transformJSON(req) {
       RunnyNose: false,
       Source: "Toll Free",
       FormStatus: "Complete",
+      BodyPain: false,
+      Fever: false,
+      Cough: false,
+      Headache: false,
+      SoreThroat: false,
+      UnwellnessFeeling: false,
+      BreathingDifficulty: false,
+      BodyPain: false,
+
       HouseToHouseID: 0,
     },
     operate: [{
